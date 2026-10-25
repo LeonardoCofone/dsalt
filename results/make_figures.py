@@ -45,7 +45,7 @@ MODELS = {
     "3B": ("context_scaling_3b.json", "paper_eval_results_3b.json", "Qwen2.5-3B graft, 36 layers"),
 }
 ORDER = ["70M", "0_3B", "48L", "3B"]
-SHORT = {"70M": "70M, 14L", "0_3B": "0.3B, 18L", "48L": "170M, 48L (3 seeds)", "3B": "Qwen2.5-3B, 36L"}
+SHORT = {"70M": "70M, 14L", "0_3B": "0.3B, 18L", "48L": "170M, 48L (3 seeds)", "3B": "Qwen2.5-3B graft, 36L"}
 
 # extra seeds of the 48-layer pair (the files in MODELS are seed 1)
 SEEDS_CS = ["context_scaling_proto48_seed999.json", "context_scaling_proto48_seed6767.json"]
@@ -199,7 +199,7 @@ def fig_dobrushin():
             c = _pe_curve(tag, m, "dobrushin_L")
             if c is not None:
                 _draw(ax, m, *c, ms=3)
-        ax.axhline(1.0, color="#9a998f", lw=0.8, ls="--")
+        ax.axhline(1.0, color="#9a998f", lw=0.8, ls="--", zorder=1)
         ax.set_ylim(0.5, 1.02)
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         ax.set_title(MODELS[tag][2])
@@ -242,46 +242,56 @@ def fig_ppl():
 
 
 def fig_counterfactual():
-    """Delta = ppl(distant context replaced) - ppl(true) against ppl(true), across lengths."""
+    """Delta = ppl(distant context replaced) - ppl(true), and ppl(true), against context length."""
     # On the graft only DSALT and SWA are drawn: the dense and Sparse-T graft runs of
     # this test disagree with the context sweep on the same models (dense 96.8 against
     # 8.55 at 16k) for reasons not yet traced, so the paper does not use them.
-    panels = [(_load("counterfactual_proto48.json"), "170M, 48 layers", ("dense", "swa", "spatra", "dsalt")),
-              (_load("bench_3b_4way.json")["counterfactual"], "Qwen2.5-3B graft, 36 layers", ("swa", "dsalt"))]
-    fig, axes = plt.subplots(1, 2, figsize=(7, 3.2))
-    for ax, (data, title, kinds) in zip(axes, panels):
-        ax.axhline(0.0, color="#9a998f", lw=0.9, ls="--")
+    scratch = _load("counterfactual_proto48.json")["models"]
+    graft = _load("bench_3b_4way.json")["counterfactual"]["models"]
+    seeds = [s["counterfactual"] for s in _load(CAUSAL)["seeds"].values()]
+
+    def single(block, key):
+        pts = sorted((int(L), v[key]) for L, v in block.items()
+                     if isinstance(v, dict) and isinstance(v.get("delta"), float))
+        x, y = (np.array(a, float) for a in zip(*pts))
+        return x, y, y, y, 1
+
+    def dsalt_seeds(key):
+        Ls = sorted(int(L) for L in seeds[0])
+        Y = np.array([[s[str(L)]["block_causal"][key] for L in Ls] for s in seeds])
+        return np.array(Ls, float), Y.mean(0), Y.min(0), Y.max(0), len(seeds)
+
+    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.6))
+    panels = [(axes[0], scratch, ("dense", "spatra", "swa", "dsalt"), "delta", "From scratch, 48 layers"),
+              (axes[1], scratch, ("dense", "spatra", "swa", "dsalt"), "ppl_true", "From scratch, 48 layers"),
+              (axes[2], graft, ("swa", "dsalt"), "delta", "Qwen2.5-3B graft")]
+    for ax, data, kinds, key, title in panels:
         for m in kinds:
-            col, ls, mk, name = STYLE[m]
-            if len(kinds) == 4 and m == "dsalt":
-                run = next(iter(_load(CAUSAL)["seeds"].values()))["counterfactual"]
-                pts = sorted((int(L), v["block_causal"]["ppl_true"], v["block_causal"]["delta"])
-                             for L, v in run.items())
-            else:
-                pts = sorted((int(L), v["ppl_true"], v["delta"]) for L, v in data["models"][m].items()
-                             if isinstance(v, dict) and isinstance(v.get("delta"), float))
-            xs = [p[1] for p in pts]
-            ys = [p[2] for p in pts]
-            ax.plot(xs, ys, ls, color=col, lw=1.3, zorder=3)
-            for j, (_, x, y) in enumerate(pts):
-                ax.scatter(x, y, s=22 + 22 * j, color=col, marker=mk, zorder=4,
-                           edgecolor="white", linewidth=0.7, label=name if j == 0 else None)
-        if len(kinds) == 4:
-            ax.set_xscale("log", base=2)
-            ax.set_yscale("symlog", linthresh=0.2)
-            ax.xaxis.set_major_formatter(ScalarFormatter())
-            ax.xaxis.set_minor_formatter(NullFormatter())
-        else:
-            ax.set_xlim(8.0, 9.2)
-            ax.set_ylim(-0.05, 0.12)
-            ax.xaxis.set_major_formatter(ScalarFormatter(useOffset=False))
-            ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
-        ax.text(0.02, 0.97, "marker size: 16k to 128k tokens",
-                transform=ax.transAxes, fontsize=6.5, color=INK, va="top")
+            curve = dsalt_seeds(key) if (m == "dsalt" and data is scratch) else single(data[m], key)
+            _draw(ax, m, *curve)
+        _len_axis(ax, [16384, 32768, 65536, 131072])
         ax.set_title(title)
-        ax.set_xlabel("Perplexity, true context" + (" (log scale)" if len(kinds) == 4 else ""))
-    axes[0].set_ylabel(r"$\Delta$ = ppl$_{\mathrm{replaced}}$ $-$ ppl$_{\mathrm{true}}$")
-    axes[0].legend(loc="lower right", markerscale=0.9)
+    ax = axes[0]
+    ax.axhline(0.0, color="#9a998f", lw=0.9, ls="--", zorder=1)
+    ax.set_yscale("symlog", linthresh=0.1, linscale=0.5)
+    ax.set_ylim(-0.06, 40)
+    ax.set_yticks([0, 0.1, 1, 10])
+    ax.set_yticklabels(["0", "0.1", "1", "10"])
+    ax.yaxis.set_minor_locator(plt.NullLocator())
+    ax.yaxis.set_minor_formatter(NullFormatter())
+    ax.set_ylabel(r"$\Delta$ = ppl$_{\mathrm{replaced}}$ $-$ ppl$_{\mathrm{true}}$")
+    ax = axes[1]
+    _log_y(ax)
+    ax.set_ylim(10, 140)
+    ax.set_yticks([16, 32, 64, 128])
+    ax.set_ylabel("Perplexity, true context")
+    ax = axes[2]
+    ax.axhline(0.0, color="#9a998f", lw=0.9, ls="--", zorder=1)
+    ax.set_ylim(-0.02, 0.1)
+    ax.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
+    ax.set_ylabel(r"$\Delta$ (linear scale)")
+    h, l = axes[0].get_legend_handles_labels()
+    fig.legend(h, l, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.06))
     fig.tight_layout()
     _save(fig, "counterfactual")
 
@@ -313,6 +323,7 @@ def fig_latency_memory():
     ax.set_ylabel("Peak memory (GB)")
     ax.set_title("Peak memory, 0.3B")
     h, l = ax.get_legend_handles_labels()
+    l = ["Dense (FlashAttention)" if x == "Dense" else x for x in l]
     fig.legend(h, l, loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.04))
     fig.tight_layout()
     _save(fig, "latency_memory")
