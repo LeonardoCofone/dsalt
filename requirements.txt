@@ -1,0 +1,17 @@
+# Core. torch>=2.4 is required by the flex_attention paths in the baselines.
+torch>=2.4.0
+numpy>=1.24.0
+
+# Pretrained backbones (models/load_qwen_into_dsalt.py) and tokenizers.
+transformers>=4.35.0
+
+# Datasets for shard preparation and the BABILong benchmark.
+datasets
+
+# Plotting and progress reporting.
+matplotlib>=3.7.0
+tqdm>=4.65.0
+
+# Optional: the Triton fast path. Bundled with the Linux torch wheels; without it
+# the library falls back to masked SDPA (see dsalt/README.md).
+# triton>=2.2.0

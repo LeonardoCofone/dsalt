@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Checkpoints and weights
+*.pt
+*.pth
+*.safetensors
+checkpoints*/
+
+# Data and generated artifacts
+data_shards*/
+figures/
+*.bak
+
+# Tooling / local settings
+.claude
+.vscode/
+.idea/
+.DS_Store

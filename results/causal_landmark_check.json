@@ -1,0 +1,340 @@
+{
+  "threshold": 0.02,
+  "block": 512,
+  "n_windows": 8,
+  "rule": "block-causal ppl within threshold of whole-sequence ppl at every length and seed",
+  "seeds": {
+    "/home/jovyan/checkpoints_dsalt_48L": {
+      "sanity": {
+        "4096": {
+          "triton": 15.683543763989114,
+          "global_torch": 15.662929760298722,
+          "rel_diff": 0.001314371547693437
+        },
+        "16384": {
+          "triton": 14.988346609118167,
+          "global_torch": 14.982078213982124,
+          "rel_diff": 0.00041821791952889587
+        }
+      },
+      "sweep": {
+        "2048": {
+          "whole_sequence": 11.893168755494267,
+          "block_causal": 11.959855815044655,
+          "rel_diff": 0.005607173405286154
+        },
+        "4096": {
+          "whole_sequence": 11.446347777293559,
+          "block_causal": 11.442472369472135,
+          "rel_diff": 0.00033857155983949293
+        },
+        "8192": {
+          "whole_sequence": 11.78388683311174,
+          "block_causal": 11.780268668044684,
+          "rel_diff": 0.0003070434329774472
+        },
+        "16384": {
+          "whole_sequence": 13.719599564877957,
+          "block_causal": 13.68202308394682,
+          "rel_diff": 0.0027388905013912895
+        },
+        "32768": {
+          "whole_sequence": 16.73064430696253,
+          "block_causal": 16.717946487220892,
+          "rel_diff": 0.0007589558123804556
+        },
+        "65536": {
+          "whole_sequence": 20.03990401942554,
+          "block_causal": 20.14329269721538,
+          "rel_diff": 0.005159140367619619
+        },
+        "131072": {
+          "whole_sequence": 23.87400474723453,
+          "block_causal": 24.32173434306903,
+          "rel_diff": 0.018753853849608627
+        }
+      },
+      "counterfactual": {
+        "16384": {
+          "whole_sequence": {
+            "ppl_true": 13.715176649280854,
+            "ppl_corrupt": 13.91262110947138,
+            "delta": 0.19744446019052475,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 13.740344117565096,
+            "ppl_corrupt": 13.975242077285479,
+            "delta": 0.2348979597203833,
+            "n_windows": 8
+          }
+        },
+        "32768": {
+          "whole_sequence": {
+            "ppl_true": 14.509560644511081,
+            "ppl_corrupt": 14.969059893593883,
+            "delta": 0.4594992490828016,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 14.57966093279847,
+            "ppl_corrupt": 14.99220235344327,
+            "delta": 0.4125414206447999,
+            "n_windows": 8
+          }
+        },
+        "65536": {
+          "whole_sequence": {
+            "ppl_true": 15.848950623183674,
+            "ppl_corrupt": 16.29037105519748,
+            "delta": 0.4414204320138051,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 15.97427686024995,
+            "ppl_corrupt": 16.3261382659726,
+            "delta": 0.3518614057226497,
+            "n_windows": 8
+          }
+        },
+        "131072": {
+          "whole_sequence": {
+            "ppl_true": 17.400188993141327,
+            "ppl_corrupt": 18.052199121097647,
+            "delta": 0.65201012795632,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 17.640337781098598,
+            "ppl_corrupt": 18.195068559943103,
+            "delta": 0.5547307788445046,
+            "n_windows": 8
+          }
+        }
+      },
+      "sanity_ok": true
+    },
+    "/home/jovyan/checkpoints_dsalt_48L_999seed": {
+      "sanity": {
+        "4096": {
+          "triton": 15.50213696820998,
+          "global_torch": 15.513578452543959,
+          "rel_diff": 0.0007380585242822735
+        },
+        "16384": {
+          "triton": 14.931172723877355,
+          "global_torch": 14.946988692793596,
+          "rel_diff": 0.0010592583187353454
+        }
+      },
+      "sweep": {
+        "2048": {
+          "whole_sequence": 11.892222959157184,
+          "block_causal": 11.929173074660222,
+          "rel_diff": 0.0031070823032783175
+        },
+        "4096": {
+          "whole_sequence": 11.4473299262101,
+          "block_causal": 11.439626379458836,
+          "rel_diff": 0.0006729557722998634
+        },
+        "8192": {
+          "whole_sequence": 11.78307667210551,
+          "block_causal": 11.797810845622617,
+          "rel_diff": 0.0012504521465083799
+        },
+        "16384": {
+          "whole_sequence": 13.723183217039649,
+          "block_causal": 13.723632696421184,
+          "rel_diff": 3.27532886813718e-05
+        },
+        "32768": {
+          "whole_sequence": 16.664366789611496,
+          "block_causal": 16.717236519372573,
+          "rel_diff": 0.0031726215840398096
+        },
+        "65536": {
+          "whole_sequence": 19.687680896448867,
+          "block_causal": 19.816574451621417,
+          "rel_diff": 0.006546914075379918
+        },
+        "131072": {
+          "whole_sequence": 23.00124930376776,
+          "block_causal": 23.279457639095156,
+          "rel_diff": 0.012095357589199426
+        }
+      },
+      "counterfactual": {
+        "16384": {
+          "whole_sequence": {
+            "ppl_true": 13.778029444864229,
+            "ppl_corrupt": 13.964984456171658,
+            "delta": 0.18695501130742898,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 13.797811775082101,
+            "ppl_corrupt": 13.993335270806394,
+            "delta": 0.19552349572429328,
+            "n_windows": 8
+          }
+        },
+        "32768": {
+          "whole_sequence": {
+            "ppl_true": 14.500219519054257,
+            "ppl_corrupt": 14.948919976235931,
+            "delta": 0.4487004571816744,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 14.480557841348102,
+            "ppl_corrupt": 15.001003145975556,
+            "delta": 0.5204453046274544,
+            "n_windows": 8
+          }
+        },
+        "65536": {
+          "whole_sequence": {
+            "ppl_true": 15.44076131739432,
+            "ppl_corrupt": 15.959376497781525,
+            "delta": 0.5186151803872043,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 15.406845626468012,
+            "ppl_corrupt": 15.981499054400716,
+            "delta": 0.574653427932704,
+            "n_windows": 8
+          }
+        },
+        "131072": {
+          "whole_sequence": {
+            "ppl_true": 16.69337486425518,
+            "ppl_corrupt": 17.237129717757696,
+            "delta": 0.5437548535025165,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 16.59737982998776,
+            "ppl_corrupt": 17.272797766436017,
+            "delta": 0.6754179364482589,
+            "n_windows": 8
+          }
+        }
+      },
+      "sanity_ok": true
+    },
+    "/home/jovyan/checkpoints_dsalt_48L_6767seed": {
+      "sanity": {
+        "4096": {
+          "triton": 15.87317844423795,
+          "global_torch": 15.867729756284026,
+          "rel_diff": 0.00034326382539360254
+        },
+        "16384": {
+          "triton": 15.075418524208512,
+          "global_torch": 15.048067684872164,
+          "rel_diff": 0.001814267331446054
+        }
+      },
+      "sweep": {
+        "2048": {
+          "whole_sequence": 11.814284965459505,
+          "block_causal": 11.869218573400923,
+          "rel_diff": 0.004649761547315244
+        },
+        "4096": {
+          "whole_sequence": 11.468212151264353,
+          "block_causal": 11.48042495743444,
+          "rel_diff": 0.00106492677402559
+        },
+        "8192": {
+          "whole_sequence": 11.831761874809857,
+          "block_causal": 11.838438476102192,
+          "rel_diff": 0.0005642947654778508
+        },
+        "16384": {
+          "whole_sequence": 13.689778762811946,
+          "block_causal": 13.726799305207736,
+          "rel_diff": 0.0027042469449072644
+        },
+        "32768": {
+          "whole_sequence": 16.647353749270337,
+          "block_causal": 16.713109338587245,
+          "rel_diff": 0.003949912418950646
+        },
+        "65536": {
+          "whole_sequence": 19.85461651070723,
+          "block_causal": 20.087675819310142,
+          "rel_diff": 0.011738293130830631
+        },
+        "131072": {
+          "whole_sequence": 23.61498379274712,
+          "block_causal": 24.16023256921303,
+          "rel_diff": 0.023089102294170265
+        }
+      },
+      "counterfactual": {
+        "16384": {
+          "whole_sequence": {
+            "ppl_true": 13.499670065227981,
+            "ppl_corrupt": 13.771206470388492,
+            "delta": 0.2715364051605107,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 13.512405722929557,
+            "ppl_corrupt": 13.775926423694257,
+            "delta": 0.26352070076469936,
+            "n_windows": 8
+          }
+        },
+        "32768": {
+          "whole_sequence": {
+            "ppl_true": 14.298742420058801,
+            "ppl_corrupt": 14.753965025947824,
+            "delta": 0.4552226058890234,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 14.331514814174138,
+            "ppl_corrupt": 14.707528951361176,
+            "delta": 0.37601413718703824,
+            "n_windows": 8
+          }
+        },
+        "65536": {
+          "whole_sequence": {
+            "ppl_true": 15.329535109484281,
+            "ppl_corrupt": 15.905781896619526,
+            "delta": 0.5762467871352452,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 15.418655722564724,
+            "ppl_corrupt": 15.931272840104432,
+            "delta": 0.5126171175397083,
+            "n_windows": 8
+          }
+        },
+        "131072": {
+          "whole_sequence": {
+            "ppl_true": 16.987515292822415,
+            "ppl_corrupt": 17.454329018571933,
+            "delta": 0.4668137257495175,
+            "n_windows": 8
+          },
+          "block_causal": {
+            "ppl_true": 17.08879917277638,
+            "ppl_corrupt": 17.560633460049942,
+            "delta": 0.4718342872735626,
+            "n_windows": 8
+          }
+        }
+      },
+      "sanity_ok": true
+    }
+  },
+  "max_rel_diff": 0.023089102294170265,
+  "verdict": "outside threshold: report the block-causal numbers as the main numbers"
+}
